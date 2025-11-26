@@ -1,0 +1,29 @@
+Willbert Budi Lian 00000082864
+Answer these questions based on Part 3 of the tutorial:
+
+1. When a user takes a picture, that picture is stored in a path based on the given URI. In which part of the code handles this? (Copy that part of the code as the answer)
+
+fun getUriFromFile(file: File): Uri {
+        return FileProvider.getUriForFile(
+            context,
+            "com.example.lab_week_11_b.camera", // must match manifest authorities
+            file
+        )
+    }
+
+Kode di atas adalah bagian yang menangani hal tersebut. Fungsi ini bertugas menghasilkan URI dari file yang sudah dibuat. URI inilah yang kemudian dikirimkan ke aplikasi kamera melalui intent sebagai instruksi lokasi penyimpanan. Jadi, aplikasi kamera akan menulis data gambar langsung ke alamat yang ditunjuk oleh URI dari fungsi ini.
+
+2. In your FileInfo.kt, there are 5 attributes. On the first attribute, what does the URI refer to? And on the fourth attribute, what does relativePath refer to?
+
+Atribut uri merujuk pada pengenal unik atau alamat konten (content address) yang aman untuk file tersebut. Alamat ini dihasilkan oleh FileProvider agar aplikasi luar, seperti kamera, bisa mengakses atau menulis data ke file tersebut tanpa memerlukan path sistem yang mentah. Sementara itu, relativePath merujuk pada lokasi direktori atau folder tempat file akan dikelompokkan di dalam penyimpanan bersama (MediaStore), misalnya di folder Pictures/MyApp, namun tidak menyertakan nama filenya.
+
+3. [Bonus] Explain the chronological order from when a user takes a picture until the file is stored in the MediaStore.
+
+Urutannya adalah sebagai berikut:
+1. Interaksi Pengguna: Pengguna menekan tombol ambil foto. Aplikasi merespons dengan mengecek izin dan mempersiapkan proses capture.
+2. Pembuatan File dan URI: Aplikasi memanggil fungsi untuk membuat file sementara dan menghasilkan URI yang aman menggunakan FileProvider. Informasi ini dibungkus dalam objek FileInfo.
+3. Peluncuran Kamera: Aplikasi menjalankan intent kamera sambil membawa URI tadi. Ini memberitahu aplikasi kamera di mana hasil foto harus disimpan.
+4. Pengambilan Gambar: Pengguna memotret menggunakan aplikasi kamera bawaan. Kamera menyimpan data gambar ke lokasi URI yang telah disiapkan.
+5. Callback Hasil: Setelah memotret, kontrol kembali ke aplikasi kita melalui callback Activity Result. Aplikasi mengecek apakah pengambilan gambar sukses.
+6. Pemindahan ke MediaStore: Jika sukses, aplikasi menjalankan logika untuk memasukkan gambar ke MediaStore. Proses ini meliputi penyiapan metadata (nama file, tipe mime), pembuatan entri baru di database MediaStore, dan penyalinan data fisik dari file sementara FileProvider ke lokasi penyimpanan permanen galeri.
+7. Selesai: Gambar kini tersimpan secara permanen dan terindeks, sehingga dapat diakses oleh aplikasi galeri foto standar.
